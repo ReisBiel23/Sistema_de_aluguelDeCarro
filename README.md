@@ -18,3 +18,8 @@ Este documento descreve as histórias de usuário e seus critérios de aceitaç�
 | US7 | **Aprovação e Geração de Contrato**<br>Como agente, quero aprovar o pedido e gerar contrato automaticamente.    | - Contrato só para pedidos aprovados.<br>- Documento deve conter dados do cliente, veículo, período e valor.<br>- Contrato associado ao pedido aprovado.    |
 | US8 | **Gestão de Automóveis**<br>Como empresário, quero cadastrar, editar e remover veículos para manter a frota atualizada. | - Cadastrar veículos com dados completos.<br>- Remoção apenas se veículo não tiver contrato ativo.<br>- Alterações devem refletir nos pedidos.               |
 | US9 | **Autenticação e Perfis de Acesso**<br>Como usuário, quero acessar o sistema com login e senha para segurança.  | - Sistema deve validar login e senha.<br>- Perfis devem ter permissões distintas.<br>- Mensagem de erro para login inválido.                                 |
+
+
+----------------------------
+FIGMA:
+https://www.figma.com/board/Ewr3bSLRw6k7NyHvXYLB7M/Class-Diagram-Template--Community-?node-id=0-1&t=NjWeHZS0u2B7aXoS-1
