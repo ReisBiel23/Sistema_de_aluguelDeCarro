@@ -1,3 +1,12 @@
+🚗 Sistema de Aluguel de Carros – Histórias de Usuário
+
+Este documento descreve as histórias de usuário e seus critérios de aceitação para o Sistema de Aluguel de Carros, com base no diagrama de classes e nos requisitos levantados.
+
+
+📜 Histórias de Usuário
+
+
+
 | ID  | História de Usuário                                         | Critérios de Aceitação                                                                                                                                     |
 |-----|-------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
 | US1 | **Cadastro de Cliente**<br>Como um novo usuário, quero me cadastrar no sistema para ter acesso às funcionalidades de aluguel de automóveis. | - Deve ser possível inserir todos os dados obrigatórios.<br>- O sistema deve validar os campos antes de salvar.<br>- O cliente deve acessar sua conta após cadastro. |
