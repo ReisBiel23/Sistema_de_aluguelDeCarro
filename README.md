@@ -53,4 +53,4 @@ Este documento contém as histórias de usuário para o Sistema de Aluguel de Ca
 **Quero** avaliar e dar um parecer positivo a um pedido  
 **Para** dar continuidade à execução do contrato de aluguel 
 
----
+----
