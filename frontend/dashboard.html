@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aluguel de Carros - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="header">
+            <h1>Sistema de Aluguel de Carros</h1>
+            <div class="user-info">
+                <span id="userName">Usuário</span>
+                <button id="logoutBtn" class="btn-secondary">Sair</button>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="new-rental">Novo Pedido</button>
+                <button class="tab-btn" data-tab="my-rentals">Meus Pedidos</button>
+            </div>
+            
+            <!-- Aba Novo Pedido -->
+            <div id="new-rental" class="tab-content active">
+                <div class="card">
+                    <h2>Criar Novo Pedido de Aluguel</h2>
+                    
+                    <form id="rentalForm" class="rental-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="carType">Tipo de Carro:</label>
+                                <select id="carType" name="carType" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="economico">Econômico</option>
+                                    <option value="compacto">Compacto</option>
+                                    <option value="sedan">Sedan</option>
+                                    <option value="suv">SUV</option>
+                                    <option value="luxo">Luxo</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="startDate">Data de Início:</label>
+                                <input type="date" id="startDate" name="startDate" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="endDate">Data de Fim:</label>
+                                <input type="date" id="endDate" name="endDate" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="location">Local de Retirada:</label>
+                                <input type="text" id="location" name="location" placeholder="Ex: Aeroporto, Centro da cidade" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="observations">Observações:</label>
+                            <textarea id="observations" name="observations" rows="3" placeholder="Observações adicionais (opcional)"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">Criar Pedido</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Aba Meus Pedidos -->
+            <div id="my-rentals" class="tab-content">
+                <div class="card">
+                    <h2>Meus Pedidos de Aluguel</h2>
+                    
+                    <div id="rentalsContainer" class="rentals-container">
+                        <!-- Os pedidos serão carregados aqui via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="dashboard.js"></script>
+</body>
+</html>
