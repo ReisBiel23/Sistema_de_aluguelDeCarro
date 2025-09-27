@@ -1,7 +1,7 @@
 package com.rentalcar.rentalcar.service;
 
 import com.rentalcar.rentalcar.domain.validations.ClientValidations;
-import com.rentalcar.rentalcar.models.*;
+import com.rentalcar.rentalcar.models.entities.Client;
 import com.rentalcar.rentalcar.repositories.ClientRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,8 @@ public class ClientService {
         return clientRepository.findAll();
     }
 
-    public Optional<Client> findClientById(Long id){
-        return clientRepository.findById(id);
+    public Optional<Client> findClientBySocialId(String socialId){
+        return Optional.ofNullable(clientRepository.findBySocialId(socialId));
     }
 
     public Client createClient(Client client) {
@@ -33,18 +33,25 @@ public class ClientService {
     }
 
     @Transactional
-    public Client updateClient(Client client){
-        Optional<Client> existingClientOptional = Optional.ofNullable(clientRepository.findBySocialId(client.getSocialId()));
+    public Client updateClient(Client client) {
+        Client existingClient = clientRepository.findBySocialId(client.getSocialId());
 
-        if(existingClientOptional.isPresent()) {
-            Client existingClient = existingClientOptional.get();
-            existingClient.setName(client.getName());
-            existingClient.setEmail(client.getEmail());
-            existingClient.setSocialId(client.getSocialId());
-            existingClient.setOccupation(client.getOccupation());
+        if (existingClient == null) {
+            throw new IllegalArgumentException("Cliente com CPF " + client.getSocialId() + " não encontrado.");
         }
-        clientValidations.validate(client);
-        return clientRepository.save(client);
+
+        // Atualiza os campos
+        existingClient.setName(client.getName());
+        existingClient.setEmail(client.getEmail());
+        existingClient.setOccupation(client.getOccupation());
+
+        // Atualiza o endereço, se fornecido
+        if (client.getAddress() != null) {
+            existingClient.setAddress(client.getAddress());
+        }
+
+        clientValidations.validate(existingClient);
+        return clientRepository.save(existingClient);
     }
 
     public Client deleteClientById(String socialId) {

@@ -1,8 +1,7 @@
 package com.rentalcar.rentalcar.controller;
 
-import com.rentalcar.rentalcar.models.*;
+import com.rentalcar.rentalcar.models.entities.Client;
 import com.rentalcar.rentalcar.service.ClientService;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,14 +19,15 @@ public class ClientController {
         return clientService.findAllClients();
     }
 
-    @GetMapping("/client/{id}")
-    public Client getClientById(@PathVariable("id") Long id){
-        Optional<Client> client = clientService.findClientById(id);
+    @GetMapping("/client/{socialId}")
+    public Client getClientById(@PathVariable("socialId") String socialId){
+        Optional<Client> client = clientService.findClientBySocialId(socialId);
         return client.orElse(null);
     }
 
     @PostMapping("/client")
     public Client createClient(@RequestBody Client client){
+        System.out.println("Recebido: " + client.getAddress());
         return clientService.createClient(client);
     }
 
