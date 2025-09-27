@@ -1,6 +1,6 @@
 package com.rentalcar.rentalcar.domain.validations;
 
-import com.rentalcar.rentalcar.models.Client;
+import com.rentalcar.rentalcar.models.entities.Client;
 import org.springframework.stereotype.Component;
 
 @Component
