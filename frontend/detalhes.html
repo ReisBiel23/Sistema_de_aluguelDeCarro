@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Carro - RentCar</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/detalhes.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1><a href="index.html">🚗 RentCar</a></h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html">Início</a>
+                <a href="catalogo.html">Catálogo</a>
+                <a href="cliente.html" id="dashboardLink" style="display: none;">Minha Conta</a>
+                <a href="login.html" class="btn-login" id="loginLink">Login</a>
+                <a href="#" class="btn-login" id="logoutLink" style="display: none;">Sair</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="detalhes-container">
+        <div class="container">
+            <a href="catalogo.html" class="btn-voltar">← Voltar ao Catálogo</a>
+            
+            <div class="detalhes-content" id="detalhesContent">
+                 Conteúdo será carregado via JavaScript 
+            </div>
+
+            <section class="similares">
+                <h2>Carros Similares</h2>
+                <div class="carros-grid" id="carrosSimilares">
+                     Carros similares serão carregados via JavaScript 
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 RentCar. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script src="js/detalhes.js"></script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - RentCar</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1><a href="index.html">🚗 RentCar Admin</a></h1>
+            </div>
+            <nav class="nav">
+                <a href="admin.html">Dashboard</a>
+                <a href="#" class="btn-login" id="logoutLink">Sair</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="admin-container">
+        <div class="container">
+            <h1>Painel Administrativo</h1>
+            
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="clientes">Clientes</button>
+                <button class="tab-btn" data-tab="carros">Carros</button>
+                <button class="tab-btn" data-tab="reservas">Reservas</button>
+                <button class="tab-btn" data-tab="relatorios">Relatórios</button>
+            </div>
+
+            <div class="tab-content active" id="clientes">
+                <div class="section-header">
+                    <h2>Gerenciar Clientes</h2>
+                </div>
+                <div class="table-container">
+                    <table id="clientesTable">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>Telefone</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientesTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-content" id="carros">
+                <div class="section-header">
+                    <h2>Gerenciar Carros</h2>
+                    <button class="btn-primary" id="adicionarCarro">Adicionar Carro</button>
+                </div>
+                <div class="table-container">
+                    <table id="carrosTable">
+                        <thead>
+                            <tr>
+                                <th>Modelo</th>
+                                <th>Categoria</th>
+                                <th>Preço/Dia</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="carrosTableBody">
+                             Dados serão carregados via JavaScript 
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-content" id="reservas">
+                <div class="section-header">
+                    <h2>Gerenciar Reservas</h2>
+                </div>
+                <div class="table-container">
+                    <table id="reservasTable">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Carro</th>
+                                <th>Data Retirada</th>
+                                <th>Data Devolução</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservasTableBody">
+                             Dados serão carregados via JavaScript 
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-content" id="relatorios">
+                <div class="section-header">
+                    <h2>Relatórios</h2>
+                </div>
+                <div class="relatorios-grid">
+                    <div class="relatorio-card">
+                        <h3>Carros Mais Alugados</h3>
+                        <div id="carrosMaisAlugados"></div>
+                    </div>
+                    <div class="relatorio-card">
+                        <h3>Clientes Mais Ativos</h3>
+                        <div id="clientesMaisAtivos"></div>
+                    </div>
+                    <div class="relatorio-card">
+                        <h3>Faturamento Mensal</h3>
+                        <div id="faturamentoMensal"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 RentCar. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
