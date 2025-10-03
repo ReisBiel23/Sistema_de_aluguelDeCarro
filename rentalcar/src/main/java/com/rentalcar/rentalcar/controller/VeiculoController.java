@@ -16,12 +16,12 @@ public class VeiculoController {
         this.veiculoService = service;
     }
 
-    @GetMapping
+    @GetMapping("/veiculo/all")
     public List<Veiculo> getAllVeiculos() {
         return veiculoService.findAllVeiculos();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/veiculo/{id}")
     public Veiculo getVeiculoById(@PathVariable Long id) {
         return veiculoService.buscarPorId(id);
     }
@@ -31,12 +31,12 @@ public class VeiculoController {
         return veiculoService.createVeiculo(veiculo);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/veiculo/{id}")
     public Veiculo updateVeiculo(@PathVariable Long id, @RequestBody Veiculo veiculo) {
         return veiculoService.updateVeiculo(id, veiculo);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/veiculo/{id}")
     public void deletVeiculo(@PathVariable Long id) {
         veiculoService.deleteVeiculo(id);
     }

@@ -16,27 +16,27 @@ public class ReservaController {
         this.reservaService = service;
     }
 
-    @GetMapping
+    @GetMapping("/reserva/all")
     public List<Reserva> getAllReservas() {
         return reservaService.findAllReservas();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/reserva/{id}")
     public Reserva getReservaById(@PathVariable Long id) {
         return reservaService.FindReservaById(id);
     }
 
-    @PostMapping
+    @PostMapping("/reserva")
     public Reserva createReserva(@RequestBody Reserva reserva) {
         return reservaService.createReserva(reserva);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/reserva/{id}")
     public Reserva updateReserva(@PathVariable Long id, @RequestBody Reserva reserva) {
         return reservaService.updateReserva(id, reserva);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/reserva/{id}")
     public void deleteReserva(@PathVariable Long id) {
         reservaService.deleteReserva(id);
     }
