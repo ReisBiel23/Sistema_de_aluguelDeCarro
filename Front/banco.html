@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Banco - Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>🏦 Painel do Banco</h1>
+                <div class="user-info">
+                    <span id="nomeUsuario"></span>
+                    <button onclick="fazerLogout()" class="btn btn-secondary btn-sm">Sair</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+            <div id="alert" class="alert" style="display: none;"></div>
+
+             Lista de Clientes 
+            <section class="section">
+                <h2>👥 Clientes</h2>
+                <div id="listaClientes" class="table-container"></div>
+            </section>
+
+             Histórico de Pagamentos 
+            <section class="section">
+                <h2>💳 Histórico de Pagamentos</h2>
+                <div id="historicoPagamentos" class="table-container"></div>
+            </section>
+        </div>
+    </div>
+
+     Modal de Editar Crédito 
+    <div id="modalCredito" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <h2>Ajustar Limite de Crédito</h2>
+            <div id="clienteSelecionado"></div>
+            <form id="formCredito">
+                <input type="hidden" id="clienteId">
+                <div class="form-group">
+                    <label for="novoLimite">Novo Limite de Crédito (R$)</label>
+                    <input type="number" id="novoLimite" required min="0" step="0.01">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Atualizar Limite</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/banco.js"></script>
+</body>
+</html>

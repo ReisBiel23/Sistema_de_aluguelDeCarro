@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>🔐 Login</h1>
+            <p>Escolha seu perfil e faça login</p>
+        </div>
+
+        <div class="profile-cards">
+            <div class="card">
+                <div class="card-icon">🧍‍♂️</div>
+                <h2>Cliente</h2>
+                <p>Alugue carros e gerencie suas reservas</p>
+                <div style="background: rgba(99, 102, 241, 0.1); padding: 12px; border-radius: 8px; margin: 12px 0; font-size: 0.85rem;">
+                    <strong>Credenciais de teste:</strong><br>
+                    Email: cliente@gmail.com<br>
+                    Senha: 123456
+                </div>
+                <button onclick="preencherLogin('cliente@gmail.com', '123456')" class="btn btn-primary">Usar credenciais de teste</button>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🧑‍💼</div>
+                <h2>Administrador</h2>
+                <p>Gerencie carros e visualize estatísticas</p>
+                <div style="background: rgba(236, 72, 153, 0.1); padding: 12px; border-radius: 8px; margin: 12px 0; font-size: 0.85rem;">
+                    <strong>Credenciais de teste:</strong><br>
+                    Email: admin@admin.com<br>
+                    Senha: 123456
+                </div>
+                <button onclick="preencherLogin('admin@admin.com', '123456')" class="btn btn-primary">Usar credenciais de teste</button>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🏦</div>
+                <h2>Banco</h2>
+                <p>Gerencie créditos e pagamentos</p>
+                <div style="background: rgba(168, 85, 247, 0.1); padding: 12px; border-radius: 8px; margin: 12px 0; font-size: 0.85rem;">
+                    <strong>Credenciais de teste:</strong><br>
+                    Email: banco@banco.com<br>
+                    Senha: 123456
+                </div>
+                <button onclick="preencherLogin('banco@banco.com', '123456')" class="btn btn-primary">Usar credenciais de teste</button>
+            </div>
+        </div>
+
+        <div class="form-container" style="max-width: 500px; margin: 40px auto;">
+            <h2>Ou faça login manualmente</h2>
+            
+            <div id="alert" class="alert" style="display: none;"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required placeholder="seu@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" required placeholder="••••••••">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+            </form>
+
+            <div class="form-footer">
+                <p>Não tem uma conta? <a href="cadastro.html">Criar conta</a></p>
+                <p><a href="index.html">← Voltar para início</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        inicializarDados();
+        
+        console.log("[v0] Página de login carregada");
+        console.log("[v0] Clientes no localStorage:", obterClientes().length);
+
+        function preencherLogin(email, senha) {
+            document.getElementById('email').value = email;
+            document.getElementById('senha').value = senha;
+            document.getElementById('loginForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            
+            const resultado = fazerLogin(email, senha);
+            
+            if (resultado.sucesso) {
+                mostrarAlerta('Login realizado com sucesso! Redirecionando...', 'success');
+                
+                setTimeout(() => {
+                    switch(resultado.usuario.tipo) {
+                        case 'cliente':
+                            window.location.href = 'cliente.html';
+                            break;
+                        case 'admin':
+                            window.location.href = 'admin.html';
+                            break;
+                        case 'banco':
+                            window.location.href = 'banco.html';
+                            break;
+                    }
+                }, 1000);
+            } else {
+                mostrarAlerta(resultado.mensagem, 'error');
+            }
+        });
+
+        function mostrarAlerta(mensagem, tipo) {
+            const alert = document.getElementById('alert');
+            alert.textContent = mensagem;
+            alert.className = `alert alert-${tipo}`;
+            alert.style.display = 'block';
+            
+            if (tipo === 'success') {
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>

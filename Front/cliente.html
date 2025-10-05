@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Cliente - Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>🚗 Painel do Cliente</h1>
+                <div class="user-info">
+                    <span id="nomeUsuario"></span>
+                    <span class="credito">Crédito: R$ <span id="creditoDisponivel">0</span></span>
+                    <button onclick="fazerLogout()" class="btn btn-secondary btn-sm">Sair</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+            <div id="alert" class="alert" style="display: none;"></div>
+
+             Seção: Carros Disponíveis 
+            <section class="section">
+                <h2>🚙 Carros Disponíveis</h2>
+                <div class="filters">
+                    <input type="text" id="buscarCarro" placeholder="Buscar por modelo ou marca...">
+                    <select id="filtroCategoria">
+                        <option value="">Todas as categorias</option>
+                        <option value="Econômico">Econômico</option>
+                        <option value="Sedan">Sedan</option>
+                        <option value="SUV">SUV</option>
+                        <option value="Luxo">Luxo</option>
+                    </select>
+                    <select id="ordenar">
+                        <option value="modelo">Ordenar por Modelo</option>
+                        <option value="preco-asc">Preço: Menor para Maior</option>
+                        <option value="preco-desc">Preço: Maior para Menor</option>
+                    </select>
+                </div>
+                <div id="carrosDisponiveis" class="cars-grid"></div>
+            </section>
+
+             Seção: Minhas Reservas 
+            <section class="section">
+                <h2>📋 Minhas Reservas</h2>
+                <div id="minhasReservas" class="table-container"></div>
+            </section>
+
+             Seção: Histórico de Pagamentos 
+            <section class="section">
+                <h2>💳 Histórico de Pagamentos</h2>
+                <div id="historicoPagamentos" class="table-container"></div>
+            </section>
+        </div>
+    </div>
+
+     Modal de Reserva 
+    <div id="modalReserva" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <h2>Fazer Reserva</h2>
+            <div id="carroSelecionado"></div>
+            <form id="formReserva">
+                <div class="form-group">
+                    <label for="dataInicio">Data de Início</label>
+                    <input type="date" id="dataInicio" required>
+                </div>
+                <div class="form-group">
+                    <label for="dataFim">Data de Fim</label>
+                    <input type="date" id="dataFim" required>
+                </div>
+                <div class="form-group">
+                    <label>Valor Total</label>
+                    <div class="valor-total">R$ <span id="valorTotal">0</span></div>
+                    <small id="diasReserva"></small>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Confirmar Reserva</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cliente.js"></script>
+</body>
+</html>

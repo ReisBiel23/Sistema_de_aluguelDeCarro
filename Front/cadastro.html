@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h1>📝 Criar Conta</h1>
+            <p class="subtitle">Preencha seus dados para se cadastrar</p>
+
+            <div id="alert" class="alert" style="display: none;"></div>
+
+            <form id="cadastroForm">
+                <div class="form-group">
+                    <label for="nome">Nome Completo</label>
+                    <input type="text" id="nome" required placeholder="João Silva">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required placeholder="seu@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" required placeholder="••••••••" minlength="6">
+                    <small>Mínimo de 6 caracteres</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmarSenha">Confirmar Senha</label>
+                    <input type="password" id="confirmarSenha" required placeholder="••••••••">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Criar Conta</button>
+            </form>
+
+            <div class="form-footer">
+                <p>Já tem uma conta? <a href="login.html">Fazer login</a></p>
+                <p><a href="index.html">← Voltar para início</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.getElementById('cadastroForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+            
+            // Validações
+            if (senha !== confirmarSenha) {
+                mostrarAlerta('As senhas não coincidem!', 'error');
+                return;
+            }
+            
+            if (senha.length < 6) {
+                mostrarAlerta('A senha deve ter no mínimo 6 caracteres!', 'error');
+                return;
+            }
+            
+            const resultado = cadastrarUsuario(nome, email, senha);
+            
+            if (resultado.sucesso) {
+                mostrarAlerta('Cadastro realizado com sucesso! Redirecionando para login...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            } else {
+                mostrarAlerta(resultado.mensagem, 'error');
+            }
+        });
+
+        function mostrarAlerta(mensagem, tipo) {
+            const alert = document.getElementById('alert');
+            alert.textContent = mensagem;
+            alert.className = `alert alert-${tipo}`;
+            alert.style.display = 'block';
+        }
+
+        // Validação em tempo real
+        document.getElementById('confirmarSenha').addEventListener('input', function() {
+            const senha = document.getElementById('senha').value;
+            if (this.value && this.value !== senha) {
+                this.style.borderColor = '#e74c3c';
+            } else {
+                this.style.borderColor = '#ddd';
+            }
+        });
+    </script>
+</body>
+</html>
