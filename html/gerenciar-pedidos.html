@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerenciar Pedidos - Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <style>
+      /* Pequenos estilos específicos da página (ajuste conforme seu CSS) */
+      .table { width: 100%; border-collapse: collapse; }
+      .table th, .table td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--color-border); text-align: left; }
+      .table th { font-weight: 600; color: var(--color-text-muted); background: var(--color-background); }
+      .status-badge { padding: 0.25rem 0.5rem; border-radius: 999px; font-size: 0.85rem; }
+      .status-pendente { background: #fff7ed; color: #92400e; }
+      .status-aprovado { background: #ecfdf5; color: #065f46; }
+      .status-andamento { background: #eff6ff; color: #1e3a8a; }
+      .status-concluido { background: #f0fdf4; color: #065f46; }
+      .status-cancelado { background: #fff1f2; color: #9f1239; }
+      .btn-sm { padding: 6px 8px; font-size: 0.85rem; border-radius: 6px; display:inline-flex; gap:6px; align-items:center; }
+      .actions > * { margin-right: 6px; }
+      .empty { color: var(--color-text-muted); padding: 1rem; text-align: center; }
+      .toast { position: fixed; right: 16px; bottom: 16px; background: #111827; color: #fff; padding: 10px 14px; border-radius: 8px; opacity: 0.95; z-index: 200; }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar collapsed" id="sidebar" aria-expanded="false">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">
+            <span class="logo-icon" aria-hidden="true">🚗</span>
+            <span class="logo-text">CarRental</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Navegação principal">
+          <div class="nav-section">
+            <div class="nav-section-title">Menu Principal</div>
+
+            <a href="dashboard.html" class="nav-link" data-role="admin,client">
+              <span class="nav-icon" aria-hidden="true">📊</span>
+              <span class="nav-text">Dashboard</span>
+            </a>
+
+            <a href="veiculos.html" class="nav-link" data-role="admin,client">
+              <span class="nav-icon" aria-hidden="true">🚗</span>
+              <span class="nav-text">Veículos</span>
+            </a>
+
+            <a href="pedidos.html" class="nav-link" data-role="client">
+              <span class="nav-icon" aria-hidden="true">📋</span>
+              <span class="nav-text">Pedidos</span>
+            </a>
+
+            <a href="gerenciar-pedidos.html" class="nav-link active" data-role="admin">
+              <span class="nav-icon" aria-hidden="true">🛠️</span>
+              <span class="nav-text">Gerenciar Pedidos</span>
+            </a>
+
+            <a href="contratos.html" class="nav-link" data-role="admin,client">
+              <span class="nav-icon" aria-hidden="true">📄</span>
+              <span class="nav-text">Contratos</span>
+            </a>
+
+          </div>
+
+          <div class="nav-section">
+            <div class="nav-section-title">Conta</div>
+
+            <a href="perfil.html" class="nav-link" data-role="admin,client">
+              <span class="nav-icon" aria-hidden="true">👤</span>
+              <span class="nav-text">Perfil</span>
+            </a>
+
+            <a href="#" class="nav-link" id="logoutBtn">
+              <span class="nav-icon" aria-hidden="true">🚪</span>
+              <span class="nav-text">Sair</span>
+            </a>
+          </div>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="user-profile">
+            <div class="user-avatar" id="userAvatar" aria-hidden="true">U</div>
+            <div class="user-info">
+              <div class="user-name" id="userName">Usuário</div>
+              <div class="user-role" id="userRole">—</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Overlay for mobile -->
+      <div class="sidebar-overlay" id="sidebarOverlay" tabindex="-1" aria-hidden="true"></div>
+
+      <!-- Main -->
+      <main class="main-content">
+        <header class="topbar">
+          <div class="topbar-left">
+            <button class="menu-toggle" id="menuToggle" aria-label="Alternar menu">☰</button>
+            <h1 class="page-title">Gerenciar Pedidos</h1>
+          </div>
+        </header>
+
+        <div class="content">
+          <div class="content-header">
+            <h2 class="content-title">Pedidos dos Clientes</h2>
+            <p class="content-description">Aqui você visualiza e gerencia os pedidos de aluguel. Apenas administradores têm acesso a esta página.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Lista de Pedidos</h3>
+            </div>
+            <div class="card-body">
+              <div id="ordersContainer">
+                <!-- tabela será injetada aqui -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- auth script (uma vez) -->
+    <script src="js/auth.js"></script>
+    <!-- manter dashboard behaviour se existir -->
+    <script type="module" src="js/dashboard.js"></script>
+
+    <script>
+      // Gerenciar pedidos (front-end apenas - usa localStorage 'orders')
+      (function () {
+        // statuses aceitos
+        const STATUS = {
+          PENDENTE: 'Pendente',
+          APROVADO: 'Aprovado',
+          ANDAMENTO: 'Em Andamento',
+          CONCLUIDO: 'Concluído',
+          CANCELADO: 'Cancelado'
+        };
+
+        // keys
+        const ORDERS_KEY = 'orders';
+
+        function sampleOrders() {
+          return [
+            { id: 'P-1001', client: 'João Silva', email: 'joao@example.com', vehicle: 'Toyota Corolla', start: '2025-09-01', end: '2025-09-05', status: STATUS.PENDENTE },
+            { id: 'P-1002', client: 'Maria Souza', email: 'maria@example.com', vehicle: 'Honda Civic', start: '2025-09-02', end: '2025-09-04', status: STATUS.APROVADO },
+            { id: 'P-1003', client: 'Carlos Pereira', email: 'carlos@example.com', vehicle: 'Ford Ka', start: '2025-09-10', end: '2025-09-12', status: STATUS.ANDAMENTO },
+            { id: 'P-1004', client: 'Luciana Lima', email: 'luciana@example.com', vehicle: 'Renault Logan', start: '2025-08-20', end: '2025-08-22', status: STATUS.CONCLUIDO }
+          ];
+        }
+
+        function loadOrders() {
+          try {
+            const raw = localStorage.getItem(ORDERS_KEY);
+            if (!raw) {
+              const s = sampleOrders();
+              localStorage.setItem(ORDERS_KEY, JSON.stringify(s));
+              return s;
+            }
+            return JSON.parse(raw);
+          } catch (e) {
+            console.error('Erro ao ler orders do localStorage', e);
+            const s = sampleOrders();
+            localStorage.setItem(ORDERS_KEY, JSON.stringify(s));
+            return s;
+          }
+        }
+
+        function saveOrders(arr) {
+          localStorage.setItem(ORDERS_KEY, JSON.stringify(arr));
+        }
+
+        function formatStatusBadge(status) {
+          const cls = {
+            [STATUS.PENDENTE]: 'status-pendente',
+            [STATUS.APROVADO]: 'status-aprovado',
+            [STATUS.ANDAMENTO]: 'status-andamento',
+            [STATUS.CONCLUIDO]: 'status-concluido',
+            [STATUS.CANCELADO]: 'status-cancelado'
+          }[status] || 'status-pendente';
+          return '<span class="status-badge ' + cls + '">' + status + '</span>';
+        }
+
+        function renderOrdersTable(orders) {
+          const container = document.getElementById('ordersContainer');
+          if (!container) return;
+          if (!orders || orders.length === 0) {
+            container.innerHTML = '<div class="empty">Nenhum pedido encontrado.</div>';
+            return;
+          }
+
+          let html = '<table class="table" aria-describedby="Lista de pedidos">';
+          html += '<thead><tr><th>ID</th><th>Cliente</th><th>Veículo</th><th>Período</th><th>Status</th><th>Ações</th></tr></thead>';
+          html += '<tbody>';
+          orders.forEach(order => {
+            const periodo = order.start + ' → ' + order.end;
+            html += '<tr data-id="' + order.id + '">';
+            html += '<td>' + order.id + '</td>';
+            html += '<td>' + escapeHtml(order.client) + '<br><small class="text-muted">' + escapeHtml(order.email) + '</small></td>';
+            html += '<td>' + escapeHtml(order.vehicle) + '</td>';
+            html += '<td>' + periodo + '</td>';
+            html += '<td>' + formatStatusBadge(order.status) + '</td>';
+            html += '<td class="actions">';
+            // Aprovar: somente se Pendente
+            if (order.status === STATUS.PENDENTE) {
+              html += '<button class="btn btn-primary btn-sm" data-action="approve">Aprovar</button>';
+              html += '<button class="btn btn-outline btn-sm" data-action="reject">Rejeitar</button>';
+            }
+            // Se aprovado -> iniciar/colocar em andamento
+            if (order.status === STATUS.APROVADO) {
+              html += '<button class="btn btn-primary btn-sm" data-action="start">Iniciar</button>';
+            }
+            // Se em andamento -> marcar concluído
+            if (order.status === STATUS.ANDAMENTO) {
+              html += '<button class="btn btn-success btn-sm" data-action="complete">Concluir</button>';
+            }
+            // botão detalhes sempre
+            html += '<button class="btn btn-secondary btn-sm" data-action="view">Detalhes</button>';
+            html += '</td>';
+            html += '</tr>';
+          });
+          html += '</tbody></table>';
+          container.innerHTML = html;
+
+          // Attach event listeners for action buttons
+          container.querySelectorAll('button[data-action]').forEach(btn => {
+            btn.addEventListener('click', handleActionClick);
+          });
+        }
+
+        function handleActionClick(ev) {
+          const btn = ev.currentTarget;
+          const tr = btn.closest('tr');
+          const id = tr && tr.dataset && tr.dataset.id;
+          const action = btn.dataset.action;
+          if (!id || !action) return;
+          let orders = loadOrders();
+          const idx = orders.findIndex(o => o.id === id);
+          if (idx === -1) {
+            showToast('Pedido não encontrado', true);
+            return;
+          }
+          const order = orders[idx];
+
+          if (action === 'approve') {
+            order.status = STATUS.APROVADO;
+            showToast('Pedido ' + id + ' aprovado.');
+          } else if (action === 'reject') {
+            order.status = STATUS.CANCELADO;
+            showToast('Pedido ' + id + ' rejeitado.');
+          } else if (action === 'start') {
+            order.status = STATUS.ANDAMENTO;
+            showToast('Pedido ' + id + ' iniciado.');
+          } else if (action === 'complete') {
+            order.status = STATUS.CONCLUIDO;
+            showToast('Pedido ' + id + ' concluído.');
+          } else if (action === 'view') {
+            // mostre detalhes simples numa modal ou alert (aqui usamos alert)
+            alert('Detalhes do pedido ' + id + '\\nCliente: ' + order.client + '\\nVeículo: ' + order.vehicle + '\\nPeríodo: ' + order.start + ' → ' + order.end + '\\nStatus: ' + order.status);
+            return;
+          } else {
+            console.warn('Ação desconhecida', action);
+            return;
+          }
+
+          orders[idx] = order;
+          saveOrders(orders);
+          renderOrdersTable(orders);
+        }
+
+        // util
+        function escapeHtml(s) {
+          if (!s) return '';
+          return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // toast
+        let toastTimer = null;
+        function showToast(msg, isError) {
+          const existing = document.querySelector('.toast');
+          if (existing) existing.remove();
+          const t = document.createElement('div');
+          t.className = 'toast';
+          t.textContent = msg;
+          if (isError) t.style.background = '#7f1d1d';
+          document.body.appendChild(t);
+          clearTimeout(toastTimer);
+          toastTimer = setTimeout(() => { t.remove(); }, 3000);
+        }
+
+        // Inicialização da página
+        document.addEventListener('DOMContentLoaded', function () {
+          // Auth checks and UI wiring
+          if (!window.Auth) {
+            console.error('Auth não encontrado. Verifique js/auth.js');
+            return;
+          }
+
+          // página restrita a admins
+          window.Auth.protectRoute(['admin']);
+
+          // aplica visibilidade (só por segurança; página já é admin-only)
+          window.Auth.applyRoleVisibility();
+
+          // attach logout
+          window.Auth.autoAttachLogout();
+
+          // preencher user info
+          const user = window.Auth.getCurrentUser();
+          if (user) {
+            const userNameEl = document.getElementById('userName');
+            const userRoleEl = document.getElementById('userRole');
+            const userAvatarEl = document.getElementById('userAvatar');
+            if (userNameEl) userNameEl.textContent = user.name || user.email || 'Usuário';
+            if (userRoleEl) userRoleEl.textContent = user.role === 'admin' ? 'Administrador' : 'Cliente';
+            if (userAvatarEl) userAvatarEl.textContent = (user.name || user.email || 'U').charAt(0).toUpperCase();
+          }
+
+          // carregar e renderizar pedidos
+          const orders = loadOrders();
+          renderOrdersTable(orders);
+
+          // menu toggle (integrável com seu dashboard.js)
+          const menuToggle = document.getElementById('menuToggle');
+          const sidebar = document.getElementById('sidebar');
+          const sidebarOverlay = document.getElementById('sidebarOverlay');
+          if (menuToggle && sidebar) {
+            menuToggle.addEventListener('click', () => {
+              const isMobile = window.matchMedia('(max-width: 768px)').matches;
+              if (isMobile) {
+                sidebar.classList.toggle('expanded');
+                if (sidebar.classList.contains('expanded')) {
+                  sidebarOverlay && sidebarOverlay.classList.add('active');
+                } else {
+                  sidebarOverlay && sidebarOverlay.classList.remove('active');
+                }
+              } else {
+                sidebar.classList.toggle('expanded');
+              }
+            });
+          }
+          if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', () => {
+              sidebar.classList.remove('expanded');
+              sidebarOverlay.classList.remove('active');
+            });
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

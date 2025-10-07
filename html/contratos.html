@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contratos - Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+  </head>
+  <body>
+    <div class="dashboard-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">Aluguel de Carros</div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Navegação principal">
+          <div class="nav-section">
+            <div class="nav-section-title">Menu Principal</div>
+
+            <!-- Dashboard: ambos -->
+            <a href="dashboard.html" class="nav-link active" data-role="admin,client">
+              <span class="nav-icon" aria-hidden="true">📊</span>
+              <span class="nav-text">Dashboard</span>
+            </a>
+
+            <!-- Consultar Veículos: cliente (visualizar) e admin (gerenciar) -->
+            <a href="veiculos.html" class="nav-link" data-role="client,admin">
+              <span class="nav-icon" aria-hidden="true">🚗</span>
+              <span class="nav-text">Veículos</span>
+            </a>
+
+            <!-- Pedidos: cliente -->
+            <a href="pedidos.html" class="nav-link" data-role="client">
+              <span class="nav-icon" aria-hidden="true">📋</span>
+              <span class="nav-text">Meus Pedidos</span>
+            </a>
+
+            <!-- Gerenciar Pedidos / Aprovar: admin -->
+            <a href="gerenciar-pedidos.html" class="nav-link" data-role="admin">
+              <span class="nav-icon" aria-hidden="true">🛠️</span>
+              <span class="nav-text">Gerenciar Pedidos</span>
+            </a>
+
+            <!-- Contratos: cliente gera / admin aprova - visível para ambos -->
+            <a href="contratos.html" class="nav-link" data-role="client,admin">
+              <span class="nav-icon" aria-hidden="true">📄</span>
+              <span class="nav-text">Contratos</span>
+            </a>
+
+          
+          </div>
+
+          <div class="nav-section">
+            <div class="nav-section-title">Conta</div>
+
+            <!-- Perfil: ambos -->
+            <a href="perfil.html" class="nav-link" data-role="client,admin">
+              <span class="nav-icon" aria-hidden="true">👤</span>
+              <span class="nav-text">Perfil</span>
+            </a>
+
+            <!-- Logout: sempre visível -->
+            <a href="#" class="nav-link" id="logoutBtn">
+              <span class="nav-icon" aria-hidden="true">🚪</span>
+              <span class="nav-text">Sair</span>
+            </a>
+          </div>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="user-profile">
+            <div class="user-avatar" id="userAvatar" aria-hidden="true">U</div>
+            <div class="user-info">
+              <div class="user-name" id="userName">Usuário</div>
+              <div class="user-role" id="userRole">—</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Sidebar Overlay for Mobile -->
+      <div class="sidebar-overlay" id="sidebarOverlay" tabindex="-1" aria-hidden="true"></div>
+
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Topbar -->
+        <header class="topbar">
+          <div class="topbar-left">
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <h1 class="page-title">Contratos</h1>
+          </div>
+          <div class="topbar-right">
+            <button class="topbar-action">
+              <span>🔔</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- Content -->
+        <div class="content">
+          <div class="content-header">
+            <h2 class="content-title">Meus Contratos</h2>
+            <p class="content-description">
+              Visualize e gerencie seus contratos de aluguel
+            </p>
+            <div class="content-actions">
+              <button class="btn btn-primary" id="novoContratoBtn">
+                <span>➕</span>
+                <span>Novo Contrato</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Contratos Table -->
+          <div class="card">
+            <div class="table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Pedido</th>
+                    <th>Veículo</th>
+                    <th>Data de Criação</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="contratosTable">
+                  <tr>
+                    <td colspan="6" class="text-center text-muted">
+                      Carregando contratos...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modal for Novo Contrato -->
+    <div class="modal" id="novoContratoModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="card-title">Gerar Novo Contrato</h3>
+          <button class="modal-close" id="closeNovoModal">&times;</button>
+        </div>
+        <form id="novoContratoForm">
+          <div class="form-group">
+            <label class="form-label" for="pedidoSelect">Selecione o Pedido Aprovado</label>
+            <select id="pedidoSelect" class="form-select" required>
+              <option value="">Carregando pedidos...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="dataInicio">Data de Início</label>
+            <input type="date" id="dataInicio" class="form-input" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="dataFim">Data de Término</label>
+            <input type="date" id="dataFim" class="form-input" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="observacoes">Observações</label>
+            <textarea
+              id="observacoes"
+              class="form-textarea"
+              placeholder="Observações adicionais (opcional)"
+            ></textarea>
+          </div>
+          <div class="content-actions">
+            <button type="submit" class="btn btn-primary">Gerar Contrato</button>
+            <button type="button" class="btn btn-outline" id="cancelNovoBtn">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal for Contrato Details -->
+    <div class="modal" id="contratoModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="card-title">Detalhes do Contrato</h3>
+          <button class="modal-close" id="closeModal">&times;</button>
+        </div>
+        <div id="contratoDetails">
+          <!-- Contrato details will be loaded here -->
+        </div>
+        <div class="content-actions">
+          <button class="btn btn-primary" id="downloadContratoBtn">
+            <span>⬇️</span>
+            <span>Baixar Contrato</span>
+          </button>
+          <button class="btn btn-outline" id="closeModalBtn">Fechar</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="js/contratos.js"></script>
+    <!-- incluir APENAS UMA VEZ por página -->
+<script src="js/auth.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (!window.Auth) {
+    console.error('Auth não encontrado. Verifique js/auth.js');
+    return;
+  }
+
+  // 1) Protege a página: para exigir login de qualquer usuário
+  window.Auth.protectRoute();
+
+  // Se a página for somente admin, troque a linha acima por:
+  // window.Auth.protectRoute(['admin']);
+
+  // 2) Aplica visibilidade de UI (data-role / .role-admin / .role-client)
+  window.Auth.applyRoleVisibility();
+
+  // 3) Popula infos do usuário na página (se houver elementos correspondentes)
+  const user = window.Auth.getCurrentUser();
+  if (user) {
+    // ajuste os seletores conforme seu HTML (ex.: #userName, .user-name etc.)
+    const nameEls = document.querySelectorAll('#userName, .user-name');
+    const roleEls = document.querySelectorAll('#userRole, .user-role');
+    const avatarEls = document.querySelectorAll('#userAvatar, .user-avatar');
+
+    nameEls.forEach(el => el.textContent = user.name || user.email || 'Usuário');
+    roleEls.forEach(el => el.textContent = user.role === 'admin' ? 'Administrador' : 'Cliente');
+    avatarEls.forEach(el => {
+      const c = (user.name || user.email || 'U').charAt(0).toUpperCase();
+      el.textContent = c;
+    });
+  }
+
+  // 4) (Opcional) conectar logout se não estiver ligado por autoAttach
+  window.Auth.autoAttachLogout();
+
+  // 5) (Opcional) se você usa um menu lateral colapsável e quer manter o comportamento do dashboard,
+  // verifique se seu js/dashboard.js já trata o '#menuToggle' e '#sidebar'. Caso não, mantenha o trecho
+  // que você já colocou no dashboard para toggling/overlay.
+});
+</script>
+  </body>
+</html>

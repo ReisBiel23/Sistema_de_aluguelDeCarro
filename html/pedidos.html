@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pedidos - Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <style>
+      /* Pequenos ajustes visuais específicos desta página */
+      .page-actions { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
+      .muted { color: #6b7280; }
+      .table .status-badge { padding:6px 10px; border-radius:999px; font-weight:600; font-size:0.9rem; display:inline-block; }
+      .status-Pendente { background:#fffbeb; color:#92400e; }
+      .status-Aprovado { background:#ecfdf5; color:#065f46; }
+      .status-Em\ Andamento { background:#eef2ff; color:#1e3a8a; }
+      .status-Concluído { background:#f0fdf4; color:#065f46; }
+      .status-Cancelado { background:#fff1f2; color:#9f1239; }
+      .btn-sm { padding:6px 8px; font-size:0.85rem; border-radius:6px; }
+      .empty { color:var(--color-text-muted); padding:1rem; text-align:center; }
+      .modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.45); z-index:200; padding:20px; }
+      .modal.active { display:flex; }
+      .modal-content { width:100%; max-width:720px; background:var(--color-background); border-radius:8px; padding:16px; }
+      .modal-header { display:flex; justify-content:space-between; align-items:center; }
+      .modal-close { background:none; border:none; font-size:20px; cursor:pointer; }
+      .toast { position: fixed; right: 16px; bottom: 16px; background: #111827; color: #fff; padding: 10px 14px; border-radius: 8px; opacity: 0.95; z-index: 300; }
+      @media (max-width:720px) {
+        .table thead { display:none; }
+        .table tr { display:block; margin-bottom:12px; border-bottom:1px solid rgba(0,0,0,0.05); padding-bottom:8px; }
+        .table td { display:block; text-align:left; padding:6px 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">🚗 CarRental</div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Navegação principal">
+          <div class="nav-section">
+            <div class="nav-section-title">Menu Principal</div>
+
+            <a href="dashboard.html" class="nav-link" data-role="admin,client">
+              <span class="nav-icon" aria-hidden="true">📊</span>
+              <span class="nav-text">Dashboard</span>
+            </a>
+
+            <a href="veiculos.html" class="nav-link" data-role="client,admin">
+              <span class="nav-icon" aria-hidden="true">🚗</span>
+              <span class="nav-text">Veículos</span>
+            </a>
+
+            <a href="pedidos.html" class="nav-link active" data-role="client">
+              <span class="nav-icon" aria-hidden="true">📋</span>
+              <span class="nav-text">Meus Pedidos</span>
+            </a>
+
+            <a href="gerenciar-pedidos.html" class="nav-link" data-role="admin">
+              <span class="nav-icon" aria-hidden="true">🛠️</span>
+              <span class="nav-text">Gerenciar Pedidos</span>
+            </a>
+
+            <a href="contratos.html" class="nav-link" data-role="client,admin">
+              <span class="nav-icon" aria-hidden="true">📄</span>
+              <span class="nav-text">Contratos</span>
+            </a>
+          </div>
+
+          <div class="nav-section">
+            <div class="nav-section-title">Conta</div>
+
+            <a href="perfil.html" class="nav-link" data-role="client,admin">
+              <span class="nav-icon" aria-hidden="true">👤</span>
+              <span class="nav-text">Perfil</span>
+            </a>
+
+            <a href="#" class="nav-link" id="logoutBtn">
+              <span class="nav-icon" aria-hidden="true">🚪</span>
+              <span class="nav-text">Sair</span>
+            </a>
+          </div>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="user-profile">
+            <div class="user-avatar" id="userAvatar" aria-hidden="true">U</div>
+            <div class="user-info">
+              <div class="user-name" id="userName">Usuário</div>
+              <div class="user-role" id="userRole">—</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <header class="topbar">
+          <div class="topbar-left">
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <h1 class="page-title">Pedidos</h1>
+          </div>
+          <div class="topbar-right">
+            <button class="topbar-action">🔔</button>
+          </div>
+        </header>
+
+        <div class="content">
+          <div class="content-header">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <h2 class="content-title">Meus Pedidos</h2>
+                <p class="content-description">Acompanhe o status dos seus pedidos de aluguel</p>
+              </div>
+              <div class="content-actions">
+                <a href="veiculos.html" class="btn btn-primary">
+                  <span>➕</span>
+                  <span>Novo Pedido</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div class="filter-bar" style="margin-bottom:12px;">
+            <div class="filter-row" style="display:flex;gap:8px;align-items:center;">
+              <label class="form-label" for="statusFilter">Filtrar por status</label>
+              <select id="statusFilter" class="form-select" style="min-width:180px;">
+                <option value="">Todos os status</option>
+                <option value="Pendente">Em Análise</option>
+                <option value="Aprovado">Aprovado</option>
+                <option value="Em Andamento">Em Andamento</option>
+                <option value="Concluído">Concluído</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+              <button id="refreshBtn" class="btn btn-outline">🔄 Atualizar</button>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="card">
+            <div class="table-container">
+              <table class="table" aria-describedby="Lista de pedidos do usuário">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Veículo</th>
+                    <th>Período</th>
+                    <th>Data do Pedido</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="pedidosTable">
+                  <tr>
+                    <td colspan="6" class="text-center text-muted">Carregando pedidos...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modal Detalhes do Pedido -->
+    <div class="modal" id="pedidoModal" aria-hidden="true">
+      <div class="modal-content" role="dialog" aria-modal="true">
+        <div class="modal-header">
+          <h3>Detalhes do Pedido</h3>
+          <button class="modal-close" id="closeModal">&times;</button>
+        </div>
+        <div style="margin-top:12px;" id="pedidoDetails"></div>
+        <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;" id="modalActions"></div>
+      </div>
+    </div>
+
+    <!-- auth script (uma vez) -->
+    <script src="js/auth.js"></script>
+
+    <script>
+      (function(){
+        const ORDERS_KEY = 'orders';
+
+        function loadOrders(){
+          try {
+            const raw = localStorage.getItem(ORDERS_KEY);
+            return raw ? JSON.parse(raw) : [];
+          } catch(e) {
+            console.error('Erro ao ler orders', e);
+            return [];
+          }
+        }
+        function saveOrders(arr){
+          localStorage.setItem(ORDERS_KEY, JSON.stringify(arr));
+        }
+
+        function formatStatusBadge(status){
+          const safe = String(status).replace(/\s/g, '\\ ');
+          return `<span class="status-badge status-${String(status).replace(/\s/g,'\\ ')}">${status}</span>`;
+        }
+
+        function escapeHtml(s){ if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+        // render table for current logged-in user
+        function renderTable() {
+          const table = document.getElementById('pedidosTable');
+          const user = window.Auth.getCurrentUser();
+          if (!table) return;
+          if (!user) {
+            table.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Usuário não autenticado.</td></tr>';
+            return;
+          }
+          const all = loadOrders();
+          // filter only orders by this user's email
+          const my = all.filter(o => o.email && o.email.toLowerCase() === user.email.toLowerCase());
+          // apply status filter
+          const statusFilter = document.getElementById('statusFilter').value;
+          const filtered = statusFilter ? my.filter(o => o.status === statusFilter) : my;
+
+          if (!filtered.length) {
+            table.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Nenhum pedido encontrado.</td></tr>';
+            return;
+          }
+
+          let html = '';
+          filtered.forEach(o => {
+            const periodo = (o.start ? o.start : '-') + ' → ' + (o.end ? o.end : '-');
+            const pedidoDate = o.createdAt ? new Date(o.createdAt).toLocaleString() : '-';
+            html += '<tr data-id="'+escapeHtml(o.id)+'">';
+            html += '<td>'+escapeHtml(o.id)+'</td>';
+            html += '<td>'+escapeHtml(o.vehicle)+'</td>';
+            html += '<td>'+escapeHtml(periodo)+'</td>';
+            html += '<td>'+escapeHtml(pedidoDate)+'</td>';
+            html += '<td>'+formatStatusBadge(o.status)+'</td>';
+            html += '<td>';
+            html += '<button class="btn btn-sm" data-action="view" data-id="'+escapeHtml(o.id)+'">Ver</button> ';
+            // allow cancel only if Pendente
+            if (o.status === 'Pendente') {
+              html += '<button class="btn btn-outline btn-sm" data-action="cancel" data-id="'+escapeHtml(o.id)+'">Cancelar</button>';
+            }
+            html += '</td>';
+            html += '</tr>';
+          });
+          table.innerHTML = html;
+
+          // attach handlers
+          document.querySelectorAll('button[data-action="view"]').forEach(b => b.addEventListener('click', onView));
+          document.querySelectorAll('button[data-action="cancel"]').forEach(b => b.addEventListener('click', onCancel));
+        }
+
+        function onView(ev) {
+          const id = ev.currentTarget.dataset.id;
+          const all = loadOrders();
+          const order = all.find(o => o.id === id);
+          if (!order) { alert('Pedido não encontrado.'); return; }
+          const details = document.getElementById('pedidoDetails');
+          const actions = document.getElementById('modalActions');
+          details.innerHTML = `
+            <p><strong>ID:</strong> ${escapeHtml(order.id)}</p>
+            <p><strong>Veículo:</strong> ${escapeHtml(order.vehicle)}</p>
+            <p><strong>Período:</strong> ${escapeHtml((order.start||'-') + ' → ' + (order.end||'-'))}</p>
+            <p><strong>Solicitante:</strong> ${escapeHtml(order.client || order.email)}</p>
+            <p><strong>Data do pedido:</strong> ${order.createdAt ? new Date(order.createdAt).toLocaleString() : '-'}</p>
+            <p><strong>Status:</strong> ${escapeHtml(order.status)}</p>
+          `;
+          actions.innerHTML = '';
+          if (order.status === 'Pendente') {
+            const btnCancel = document.createElement('button');
+            btnCancel.className = 'btn btn-outline';
+            btnCancel.textContent = 'Cancelar pedido';
+            btnCancel.addEventListener('click', function(){
+              if (!confirm('Deseja cancelar este pedido?')) return;
+              updateOrderStatus(order.id, 'Cancelado');
+              closeModal();
+            });
+            actions.appendChild(btnCancel);
+          }
+          const close = document.createElement('button');
+          close.className = 'btn';
+          close.textContent = 'Fechar';
+          close.addEventListener('click', closeModal);
+          actions.appendChild(close);
+
+          openModal();
+        }
+
+        function onCancel(ev) {
+          const id = ev.currentTarget.dataset.id;
+          if (!confirm('Deseja cancelar este pedido?')) return;
+          updateOrderStatus(id, 'Cancelado');
+        }
+
+        function updateOrderStatus(id, newStatus) {
+          const all = loadOrders();
+          const idx = all.findIndex(o => o.id === id);
+          if (idx === -1) { showToast('Pedido não encontrado', true); return; }
+          all[idx].status = newStatus;
+          // track status change time
+          all[idx].updatedAt = new Date().toISOString();
+          saveOrders(all);
+          showToast('Status atualizado: ' + newStatus);
+          renderTable();
+        }
+
+        // modal helpers
+        const pedidoModal = document.getElementById('pedidoModal');
+        const closeModalBtn = document.getElementById('closeModal');
+        function openModal(){ pedidoModal.classList.add('active'); pedidoModal.setAttribute('aria-hidden','false'); }
+        function closeModal(){ pedidoModal.classList.remove('active'); pedidoModal.setAttribute('aria-hidden','true'); }
+        closeModalBtn.addEventListener('click', closeModal);
+        pedidoModal.addEventListener('click', (e) => { if (e.target === pedidoModal) closeModal(); });
+
+        // toast
+        let toastTimer = null;
+        function showToast(msg, isError) {
+          const existing = document.querySelector('.toast');
+          if (existing) existing.remove();
+          const t = document.createElement('div');
+          t.className = 'toast';
+          t.textContent = msg;
+          if (isError) t.style.background = '#7f1d1d';
+          document.body.appendChild(t);
+          clearTimeout(toastTimer);
+          toastTimer = setTimeout(() => { t.remove(); }, 3000);
+        }
+
+        // refresh handler
+        document.getElementById('refreshBtn').addEventListener('click', function(){ renderTable(); showToast('Atualizado'); });
+        document.getElementById('statusFilter').addEventListener('change', renderTable);
+
+        // react to storage changes (updates from admin tab)
+        window.addEventListener('storage', function(e){
+          if (e.key === ORDERS_KEY) {
+            renderTable();
+          }
+        });
+
+        // initialization and auth wiring
+        document.addEventListener('DOMContentLoaded', function(){
+          if (!window.Auth) { console.error('Auth não encontrado'); return; }
+          // require login
+          window.Auth.protectRoute();
+
+          // apply role visibility (sidebar etc)
+          window.Auth.applyRoleVisibility();
+          window.Auth.autoAttachLogout();
+
+          // fill sidebar user info
+          const user = window.Auth.getCurrentUser();
+          if (user) {
+            document.getElementById('userName').textContent = user.name || user.email || 'Usuário';
+            document.getElementById('userRole').textContent = user.role === 'admin' ? 'Administrador' : 'Cliente';
+            document.getElementById('userAvatar').textContent = (user.name || user.email || 'U').charAt(0).toUpperCase();
+          }
+
+          // initial render
+          renderTable();
+        });
+      })();
+    </script>
+  </body>
+</html>

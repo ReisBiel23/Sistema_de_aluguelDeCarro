@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="auth-logo">🚗 CarRental</div>
+          <h1 class="auth-title">Bem-vindo de volta</h1>
+          <p class="auth-subtitle">Entre com suas credenciais para acessar o sistema</p>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <form class="auth-form" id="loginForm">
+          <div class="form-group">
+            <label class="form-label" for="email">E-mail</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              placeholder="seu@email.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">Senha</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-input"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <!-- Container de erro (opcional, mas o script procura por .login-error dentro do form) -->
+          <div class="login-error" style="display:none;color:var(--color-danger);margin-top:0.5rem"></div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg">
+            Entrar
+          </button>
+        </form>
+
+        <!-- No final do body (substitua o carregamento anterior do auth.js por estes 2 scripts) -->
+        <script src="js/auth.js"></script>
+        <script>
+          // inicializa o comportamento automático: attach do form, logout e aplicação de visibilidade
+          if (window.Auth && typeof window.Auth.initAuth === 'function') {
+            window.Auth.initAuth();
+          }
+</script>
+
+        <div class="auth-footer">
+          <p class="text-secondary">
+            Não tem uma conta?
+            <a href="cadastro.html" class="auth-link">Cadastre-se</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="js/auth.js"></script>
+  </body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+  </head>
+  <body>
+    <div class="dashboard-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar collapsed" id="sidebar" aria-expanded="false">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">
+            <span class="logo-icon" aria-hidden="true">🚗</span>
+            <span class="logo-text">CarRental</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Navegação principal">
+          <div class="nav-section">
+            <div class="nav-section-title">Menu Principal</div>
+
+            <!-- Dashboard: ambos -->
+            <a href="dashboard.html" class="nav-link active" data-role="admin,client">
+              <span class="nav-icon" aria-hidden="true">📊</span>
+              <span class="nav-text">Dashboard</span>
+            </a>
+
+            <!-- Consultar Veículos: cliente (visualizar) e admin (gerenciar) -->
+            <a href="veiculos.html" class="nav-link" data-role="client,admin">
+              <span class="nav-icon" aria-hidden="true">🚗</span>
+              <span class="nav-text">Veículos</span>
+            </a>
+
+            <!-- Pedidos: cliente -->
+            <a href="pedidos.html" class="nav-link" data-role="client">
+              <span class="nav-icon" aria-hidden="true">📋</span>
+              <span class="nav-text">Meus Pedidos</span>
+            </a>
+
+            <!-- Gerenciar Pedidos / Aprovar: admin -->
+            <a href="gerenciar-pedidos.html" class="nav-link" data-role="admin">
+              <span class="nav-icon" aria-hidden="true">🛠️</span>
+              <span class="nav-text">Gerenciar Pedidos</span>
+            </a>
+
+            <!-- Contratos: cliente gera / admin aprova - visível para ambos -->
+            <a href="contratos.html" class="nav-link" data-role="client,admin">
+              <span class="nav-icon" aria-hidden="true">📄</span>
+              <span class="nav-text">Contratos</span>
+            </a>
+
+          </div>
+
+          <div class="nav-section">
+            <div class="nav-section-title">Conta</div>
+
+            <!-- Perfil: ambos -->
+            <a href="perfil.html" class="nav-link" data-role="client,admin">
+              <span class="nav-icon" aria-hidden="true">👤</span>
+              <span class="nav-text">Perfil</span>
+            </a>
+
+            <!-- Logout: sempre visível -->
+            <a href="#" class="nav-link" id="logoutBtn">
+              <span class="nav-icon" aria-hidden="true">🚪</span>
+              <span class="nav-text">Sair</span>
+            </a>
+          </div>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="user-profile">
+            <div class="user-avatar" id="userAvatar" aria-hidden="true">U</div>
+            <div class="user-info">
+              <div class="user-name" id="userName">Usuário</div>
+              <div class="user-role" id="userRole">—</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Sidebar Overlay for Mobile -->
+      <div class="sidebar-overlay" id="sidebarOverlay" tabindex="-1" aria-hidden="true"></div>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Topbar -->
+        <header class="topbar">
+          <div class="topbar-left">
+            <button class="menu-toggle" id="menuToggle" aria-label="Alternar menu" aria-pressed="false">☰</button>
+            <h1 class="page-title">Dashboard</h1>
+          </div>
+          <div class="topbar-right">
+            <button class="topbar-action">
+              <span>🔔</span>
+              <span class="notification-badge"></span>
+            </button>
+          </div>
+        </header>
+
+        <!-- Content -->
+        <div class="content">
+          <div class="content-header">
+            <h2 class="content-title">Bem-vindo ao Sistema</h2>
+            <p class="content-description">
+              Gerencie seus veículos, pedidos e contratos de forma simples e eficiente
+            </p>
+          </div>
+
+          <!-- Stats Grid -->
+          <div class="grid grid-cols-4 mb-xl">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-label">Veículos Disponíveis</span>
+                <div class="stat-icon primary">🚗</div>
+              </div>
+              <div class="stat-value" id="statVeiculos">0</div>
+              <div class="stat-change positive">
+                <span>↑ 12%</span>
+                <span class="text-muted">vs. mês anterior</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-label">Pedidos Ativos</span>
+                <div class="stat-icon warning">📋</div>
+              </div>
+              <div class="stat-value" id="statPedidos">0</div>
+              <div class="stat-change positive">
+                <span>↑ 8%</span>
+                <span class="text-muted">vs. mês anterior</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-label">Contratos</span>
+                <div class="stat-icon success">📄</div>
+              </div>
+              <div class="stat-value" id="statContratos">0</div>
+              <div class="stat-change positive">
+                <span>↑ 23%</span>
+                <span class="text-muted">vs. mês anterior</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-label">Financiamentos</span>
+                <div class="stat-icon primary">💰</div>
+              </div>
+              <div class="stat-value" id="statFinanciamentos">0</div>
+              <div class="stat-change positive">
+                <span>↑ 15%</span>
+                <span class="text-muted">vs. mês anterior</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Ações Rápidas</h3>
+            </div>
+            <div class="content-actions">
+              <a href="veiculos.html" class="btn btn-primary" data-role="admin,client">
+                <span>🚗</span>
+                <span>Ver Veículos</span>
+              </a>
+              <a href="pedidos.html" class="btn btn-secondary" data-role="client">
+                <span>📋</span>
+                <span>Meus Pedidos</span>
+              </a>
+              <a href="contratos.html" class="btn btn-success" data-role="admin,client">
+                <span>📄</span>
+                <span>Contratos</span>
+              </a>
+        
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="card mt-lg">
+            <div class="card-header">
+              <h3 class="card-title">Atividades Recentes</h3>
+            </div>
+            <div class="table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Ação</th>
+                    <th>Descrição</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="activityTable">
+                  <tr>
+                    <td colspan="4" class="text-center text-muted">
+                      Nenhuma atividade recente
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- auth script (apenas uma vez) -->
+    <script src="js/auth.js"></script>
+
+    <!-- seu dashboard behaviour (se necessário) -->
+    <script type="module" src="js/dashboard.js"></script>
+
+    <!-- inicialização específica desta página -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        if (!window.Auth) {
+          console.error('Auth não encontrado. Garanta js/auth.js está presente.');
+          return;
+        }
+
+        // exige que qualquer usuário autenticado acesse esta página
+        window.Auth.protectRoute();
+
+        // aplica visibilidade de elementos marcados com data-role / .role-admin / .role-client
+        window.Auth.applyRoleVisibility();
+
+        // conecta botão de logout (autoAttachLogout faz o mesmo; chamada extra é segura)
+        window.Auth.autoAttachLogout();
+
+        // preenche nome, role e avatar na sidebar
+        const user = window.Auth.getCurrentUser();
+        if (user) {
+          const userNameEl = document.getElementById('userName');
+          const userRoleEl = document.getElementById('userRole');
+          const userAvatarEl = document.getElementById('userAvatar');
+
+          if (userNameEl) userNameEl.textContent = user.name || user.email || 'Usuário';
+          if (userRoleEl) userRoleEl.textContent = user.role === 'admin' ? 'Administrador' : 'Cliente';
+          if (userAvatarEl) userAvatarEl.textContent = (user.name ? user.name.charAt(0).toUpperCase() : (user.email ? user.email.charAt(0).toUpperCase() : 'U'));
+        }
+
+        // opcional: se quiser travar a sidebar aberta para admins, você pode:
+        // if (window.Auth.isAdmin()) document.getElementById('sidebar').classList.add('expanded');
+
+        // menu toggle + overlay handling (integrado com seu js/dashboard.js, mas deixo uma opção segura)
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        if (menuToggle && sidebar) {
+          menuToggle.addEventListener('click', () => {
+            const isMobile = window.matchMedia('(max-width: 768px)').matches;
+            if (isMobile) {
+              sidebar.classList.toggle('expanded');
+              if (sidebar.classList.contains('expanded')) {
+                sidebarOverlay && sidebarOverlay.classList.add('active');
+              } else {
+                sidebarOverlay && sidebarOverlay.classList.remove('active');
+              }
+            } else {
+              sidebar.classList.toggle('expanded');
+            }
+          });
+        }
+
+        if (sidebarOverlay) {
+          sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('expanded');
+            sidebarOverlay.classList.remove('active');
+          });
+        }
+      });
+    </script>
+    
+  </body>
+</html>
